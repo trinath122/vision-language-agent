@@ -1,0 +1,48 @@
+model:
+  vision_encoder: "openai/clip-vit-large-patch14"
+  language_model: "distilgpt2"
+  embedding_dim: 512
+  projection_dim: 768
+  max_seq_length: 2048
+
+training:
+  pretrain:
+    batch_size: 32
+    learning_rate: 1.0e-4
+    epochs: 10
+    warmup_steps: 1000
+    grad_clip: 1.0
+  rlhf:
+    ppo_epochs: 4
+    kl_coef: 0.1
+    reward_model: "reward_model.pt"
+  dpo:
+    beta: 0.1
+    batch_size: 16
+    learning_rate: 5.0e-5
+
+quantization:
+  enabled: false
+  bits: 16
+  load_in_8bit: false
+
+agent:
+  max_iterations: 10
+  tools:
+    - image_captioning
+    - visual_grounding
+    - object_detection
+    - vqa
+
+evaluation:
+  metrics:
+    - ragas
+    - deepeval
+  adversarial_testing: true
+  fairness_checks: true
+
+gcp:
+  project_id: "your-gcp-project-id"
+  region: "us-central1"
+  bucket: "vision-lang-agent-artifacts"
+  endpoint_name: "vision-lang-agent-v1"
